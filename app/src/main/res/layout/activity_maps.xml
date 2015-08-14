@@ -17,6 +17,13 @@
         android:text="Picture This"
         android:onClick="funcButtonPic"/>
 
+    <TextView
+        android:id="@+id/mLocationView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Exciting, NO?"
+
+        />
     <!-- <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" -->
 
