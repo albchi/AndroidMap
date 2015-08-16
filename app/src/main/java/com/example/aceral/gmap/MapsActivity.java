@@ -31,10 +31,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager mManager; // gps
     private Location mCurrentLocation; // gps
 
+    // Location [] arrLoc; // 1/3 declare
+    LatLng [] arrLatLng; // 1/3  = new LatLng(28.410067, -81.583699);
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
+        // arrLoc = new Location[100]; // 2/3 instantiate
+        arrLatLng = new LatLng[30]; // 2/3  = new LatLng(28.410067, -81.583699);
+        for(int i=0; i<30;i++) {
+            // arrLoc[i]  = new Location(); // 3/3 initialize
+            arrLatLng[i] = new LatLng(0,0); // 3/3 - forced to
+        }
         // check to see if GPS is even in the damn tablet/phone
 
         PackageManager packageManager = this.getPackageManager();
@@ -95,10 +107,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
    public void funcButtonMark(View view) {
-       Toast.makeText(this, "Marking!", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Marking!", Toast.LENGTH_SHORT).show();
        Log.d("XAC", "Marking");
-
+       mCurrentLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+       String foo =  String.format("Your Location:\n%.2f, %.2f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+       Toast.makeText(this, "Marking! " + foo, Toast.LENGTH_LONG).show();
    }
+
 
 
    public void funcButtonPic(View view) {
