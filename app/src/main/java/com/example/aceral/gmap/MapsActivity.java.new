@@ -30,6 +30,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView mLocationView;
     private LocationManager mManager; // gps
     private Location mCurrentLocation; // gps
+    private GoogleMap mMap;
+
+    private SupportMapFragment mMapFragment;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +98,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
    public void funcButtonMark(View view) {
+       Location locNow;
+       LatLng latLngNow;
+       // Marker m;
+       MarkerOptions mo;
        Toast.makeText(this, "Marking!", Toast.LENGTH_SHORT).show();
        Log.d("XAC", "Marking");
+       locNow = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER); // Locacation class
+       latLngNow = new LatLng(locNow.getLatitude(),locNow.getLongitude() ); // LatLng class
+       // mo = new MarkerOptions();
+       // mo.position(latLngNow);
+       //mo.title("You Marked Me");
+       // m = mMap.addMarker(mo);
+       // Marker m = mMap.addMarker(new MarkerOptions() .position(new LatLng(locNow.getLatitude(),locNow.getLongitude()) .title("You Marked Me"));
+       // Marker m = mMap.addMarker(new MarkerOptions() .position(new LatLng(34,-122) .title("You Marked Me") );
+
+       /// production
+       /*
+       MarkerOptions mo2 = new MarkerOptions()
+               .position(latLngNow)
+               .title("Mark My Worlds");
+
+     mMap.addMarker(mo2);
+
+*/
+
+
+       /*
+       MarkerOptions markerOptions = new MarkerOptions()
+               .draggable(false)
+               .flat(false)
+               .position(latLngNow)
+               .title("Magic Kingdom");
+       */
+
+
+       // Marker m = mMap.addMarker(new MarkerOptions() .position(new LatLng(locNow.getLatitude(),locNow.getLongitude()) .title("You Marked Me"));
+
 
    }
 
@@ -125,16 +163,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void onClick(DialogInterface dialog,
                                             int which) {
                             //Launch settings, allowing user to change
-                            Intent i = new Intent(Settings
-                                    .ACTION_LOCATION_SOURCE_SETTINGS);
+                            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             startActivity(i);
                         }
                     });
             builder.setNegativeButton("No",
                     new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog,
-                                            int which) {
+                        public void onClick(DialogInterface dialog, int which) {
                             //No location service, no Activity
                             finish();
                         }
@@ -142,8 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.create().show();
         }
         //Get a cached location, if it exists
-        mCurrentLocation = mManager.getLastKnownLocation(
-                LocationManager.GPS_PROVIDER);
+        mCurrentLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         updateDisplay();
         //Register for updates
         int minTime = 5000;
@@ -181,7 +216,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onLocationChanged(Location location) {
             mCurrentLocation = location;
-            Toast.makeText(MapsActivity.this, "GPS invoked onLocationChanged!", Toast.LENGTH_SHORT).show();
             updateDisplay();
         }
 

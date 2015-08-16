@@ -30,12 +30,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView mLocationView;
     private LocationManager mManager; // gps
     private Location mCurrentLocation; // gps
+    private Location mMarkedLocations []; // gps
+    GoogleMap globalGMap;
+    int index = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // check to see if GPS is even in the damn tablet/phone
+        // mMarkedLocations = new Location[100];
+
+            // check to see if GPS is even in the damn tablet/phone
 
         PackageManager packageManager = this.getPackageManager();
         boolean hasGPS = packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
@@ -71,10 +76,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         bounds = new LatLngBounds.Builder();
 
+
+        // globalGMap = mapFragment.getMapAsync();
+        globalGMap.addMarker(new MarkerOptions()
+                // .position(new LatLng(0,0))
+                .position(disneySevenLagoon)
+                .title("Lagoon"));
+        /* workds
         map.addMarker(new MarkerOptions()
                 // .position(new LatLng(0,0))
                 .position(disneySevenLagoon)
                 .title("Lagoon"));
+        */
         bounds.include(new LatLng(28.410067, -81.583699));
 
         map.addMarker(new MarkerOptions()
@@ -95,17 +108,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
    public void funcButtonMark(View view) {
-       Toast.makeText(this, "Marking!", Toast.LENGTH_SHORT).show();
+       Location mCurrentLocation;
        Log.d("XAC", "Marking");
+       // mark current position in an array
+       mCurrentLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+       // mMarkedLocations[index++] = mCurrentLocation;
+       Toast.makeText(this, "Marking and inserting!", Toast.LENGTH_SHORT).show();
+
+
 
    }
 
 
    public void funcButtonPic(View view) {
+       int i;
        Toast.makeText(this, "Click!", Toast.LENGTH_SHORT).show();
        Log.d("XAC", "Click!");
 
-   }
+       /*
+       for (i = 0; i < 1; i++) {
+           // for (i = 0; i < mMarkedLocations.length; i++) {
+               Toast.makeText(this, "Your Location: %.2f, %.2f + mCurrentLocation.getLatitude() + mCurrentLocation.getLongitude()));!", Toast.LENGTH_SHORT).show();
+
+               mLocationView.setText(
+                       String.format("Your Marked Location Location:\n%.2f, %.2f",
+                               mMarkedLocations[i].getLatitude(),
+                               mMarkedLocations[i].getLongitude()
+                       )
+               ); // setText
+
+       } // for
+       */
+
+   } // funcButtonPic
 
     @Override
     protected void onResume() {
@@ -179,10 +214,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationListener mListener = new LocationListener() {
         //New location event
         @Override
+
         public void onLocationChanged(Location location) {
-            mCurrentLocation = location;
+            //mCurrentLocation = location;
+            //updateDisplay();
             Toast.makeText(MapsActivity.this, "GPS invoked onLocationChanged!", Toast.LENGTH_SHORT).show();
-            updateDisplay();
+
         }
 
         //The requested provider was disabled in settings
