@@ -32,6 +32,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView mLocationView;
     private LocationManager mManager; // gps
     private Location mCurrentLocation; // gps
+    static int onMapReadyCnt = 0;
+
 
     // Location [] arrLoc; // 1/3 declare
     ArrayList<LatLng> arrLatLng; // 1/2  = new LatLng(28.410067, -81.583699);
@@ -58,31 +60,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(this); // will call OnMapReadyCallback.onMapReady(Googlemap)?
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE); // gps
         // mLocationView = new TextView(this);
         mLocationView = (TextView)findViewById(R.id.mLocationView);
         mLocationView.setText("Hello from inside the app");
+
+        /*
+        LatLng tmp = new LatLng(40, -130);
+        arrLatLng.add(tmp);
+        tmp = new LatLng(41, -131);
+        arrLatLng.add(tmp);
+        tmp = new LatLng(42, -132);
+        arrLatLng.add(tmp);
+        */
+
+
     }
+
 
     @Override
     public void onMapReady(GoogleMap map) {
 
-        LatLng disneySevenLagoon = new LatLng(28.410067, -81.583699);
-        LatLng disneyMagicKingdom = new LatLng(28.418971, -81.581436);
+        Toast.makeText(this, "You have called onMapReady" + onMapReadyCnt,  Toast.LENGTH_SHORT).show();
+
+
+        // LatLng disneySevenLagoon = new LatLng(28.410067, -81.583699);
+          LatLng disneyMagicKingdom = new LatLng(28.418971, -81.581436);
 
 
         /*map.addMarker(new MarkerOptions()
                 // .position(new LatLng(0,0))
                 .position(disneySevenLagoon)
                 .title("Marker"));
-*/
+        */
 
 
         LatLngBounds.Builder bounds;
 
         bounds = new LatLngBounds.Builder();
 
+        /*
         map.addMarker(new MarkerOptions()
                 // .position(new LatLng(0,0))
                 .position(disneySevenLagoon)
@@ -96,6 +114,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .position(disneyMagicKingdom)
                 .title("Kingdom"));
         bounds.include(new LatLng(28.418971, -81.581436));
+        */
+        // my own marker
+        // MarkerOptions markerOptions;
+        // markerOptions = new MarkerOptions();
+        // LatLng tmpLl = new LatLng(37, -121);
+        // map.addMarker(new MarkerOptions().position(tmpLl).title("Home"));
+        // bounds.include(tmpLl);
+
+        // my own marker - but on 2nd call here
+        // MarkerOptions markerOptions;
+        // works!
+        /*
+        if (onMapReadyCnt >= 2) {
+            markerOptions = new MarkerOptions();
+            tmpLl = new LatLng(39, -124);
+            map.addMarker(new MarkerOptions().position(tmpLl).title("Costco"));
+            Toast.makeText(this, "Adding marker Costco! ", Toast.LENGTH_SHORT).show();
+
+            bounds.include(tmpLl);
+        }
+        */
+        // the one in the ArrayList
+        for( LatLng tmpLntLng : arrLatLng) {
+            map.addMarker(new MarkerOptions().position(tmpLntLng).title("Marked By You"));
+            Toast.makeText(this, "Adding marker to map I hope! ", Toast.LENGTH_SHORT).show();
+            bounds.include(tmpLntLng);
+
+        }
+
+
         map.setMyLocationEnabled(true);
 
         // map.moveCamera(CameraUpdateFactory.newLatLng(disneySevenLagoon)); // disneySevenLagoon is type LatLng
@@ -103,6 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // CameraUpdate cU = CameraUpdateFactory.newLatLngBounds(bounds.build(), 100, 100, 50);
 
         //map.moveCamera(cU);
+        onMapReadyCnt++;
 
     } // onMapReady
 
@@ -114,9 +163,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
        mCurrentLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
        String foo =  String.format("Your Location:\n%.2f, %.2f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-       LatLng tmp = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLatitude());
+
+        // more test - works
+       /*
+       LatLng tmp = new LatLng(50, -130);
        arrLatLng.add(tmp);
-       Toast.makeText(this, "Marking! Now has elements : " + arrLatLng.size(), Toast.LENGTH_SHORT).show();
+       tmp = new LatLng(51, -131);
+       arrLatLng.add(tmp);
+       tmp = new LatLng(52, -132);
+       arrLatLng.add(tmp);
+       */
+
+
+       LatLng tmp = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+       arrLatLng.add(tmp);
+
+       // Toast.makeText(this, "Marking! Now has elements : " + arrLatLng.size(), Toast.LENGTH_SHORT).show();
+
+       Toast.makeText(this, foo, Toast.LENGTH_SHORT);
+
+
+       SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+       mapFragment.getMapAsync(this); // force a call to onMapReady?
+
 
    }
 
@@ -132,7 +201,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             foo = foo + String.format("   +-+ %f", arrLatLng[0]);
        }
        */
+       TextView tv = (TextView) findViewById(R.id.mDebugText);
+
        Toast.makeText(this, "Click! You stored" + foo, Toast.LENGTH_SHORT).show();
+       mCurrentLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+       foo =  String.format("Your Location appears to be :\n%.2f, %.2f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+       LatLng tmp = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLatitude());
+       foo = foo + "old arrLatLg was " + arrLatLng.size();
+       arrLatLng.add(tmp);
+       foo = foo + " arrLatLg is now  " + arrLatLng.size();
+
+       tv.setText(foo);
+
+
+       //
+
 
    }
 
@@ -199,6 +283,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()));
         }
+
+
         // Map tmp;
         // tmp = Map.getMapAsync();
         // map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude())));
@@ -210,7 +296,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onLocationChanged(Location location) {
             mCurrentLocation = location;
-            Toast.makeText(MapsActivity.this, "GPS invoked onLocationChanged!", Toast.LENGTH_SHORT).show();
+            // GPS updates quite often, sending a Toast every 5 seconds or so
+            // Toast.makeText(MapsActivity.this, "GPS invoked onLocationChanged!", Toast.LENGTH_SHORT).show();
             updateDisplay();
         }
 
